@@ -17,6 +17,7 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $table->enum('status', ['success', 'failed', 'refunded'])->default('failed');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

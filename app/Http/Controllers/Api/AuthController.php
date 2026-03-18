@@ -9,6 +9,7 @@ use App\Notifications\ResetPassword;
 use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
@@ -47,7 +48,8 @@ class AuthController extends Controller
             $user = User::create([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
+                // password will be automatically hashed via the User model cast
+                'password' => $validated['password'],
                 'phone' => $validated['phone'],
                 'role' => $validated['role'],
             ]);
@@ -204,7 +206,8 @@ class AuthController extends Controller
                 return $this->error('User not found', null, 404);
             }
 
-            $user->update(['password' => Hash::make($validated['password'])]);
+            // Password is hashed automatically via the User model cast
+            $user->update(['password' => $validated['password']]);
 
             \DB::table('password_reset_tokens')->where('email', $validated['email'])->delete();
 
