@@ -129,8 +129,9 @@ Authorization: Bearer {access_token}
 
 ### 1.5 Refresh Token
 **Method:** POST  
-**Endpoint:** `   
-**Auth:** 18|lg4BlCWunwcpZseqcXmS9T1rkYz49y9p2xovvTWv447db45c
+**Endpoint:** `http://localhost:8000/api/v1/auth/refresh-token`  
+**Auth:** Bearer Token required (the refresh token is set in a cookie)
+
 **Request Body:** None
 
 **Success Response (200):**
@@ -174,9 +175,9 @@ Authorization: Bearer {access_token}
 ```json
 {
     "email":"visionabhi0503@gmail.com",
-    "token":"WjcUMLuoCLBYE3zrAcFjucCuYL5O74lSE8aNNHnFxPZWhFVDxRPavw3ver3zvTbH",
+    "token":"<reset-token>",
     "password":"newpassword123",
-    "password_confirmation":"newpassword123",
+    "password_confirmation":"newpassword123"
 }
 ```
 
@@ -204,8 +205,7 @@ Authorization: Bearer {access_token}
   "title": "Summer Music Festival",
   "description": "A great outdoor music festival",
   "date": "2026-07-15 18:00:00",
-  "location": "Central Park, New York",
-  "created_by": 1
+  "location": "Central Park, New York"
 }
 ```
 
@@ -230,14 +230,144 @@ Authorization: Bearer {access_token}
 ### 2.2 Get All Events
 **Method:** GET  
 **Endpoint:** `http://localhost:8000/api/v1/events`  
-**Auth:**
+**Auth:** None required
 
-**Success Response (200):**
+**Query params (optional):**
+- `search` (title)
+- `date` (YYYY-MM-DD)
+- `location` (substring match)
+
+### 2.3 Get Single Event
+**Method:** GET  
+**Endpoint:** `http://localhost:8000/api/v1/events/{id}`  
+**Auth:** None required
+
+### 2.4 Update Event
+**Method:** PATCH  
+**Endpoint:** `http://localhost:8000/api/v1/events/{id}`  
+**Auth:** Bearer Token required (organizer or admin)
+
+**Body (any subset):**
 ```json
 {
-    "success": true,
-    "message": "Events retrieved successfully",
-    "data": {
+  "title": "Updated Summer Music Festival",
+  "location": "Updated Location"
+}
+```
+
+### 2.5 Delete Event
+**Method:** DELETE  
+**Endpoint:** `http://localhost:8000/api/v1/events/{id}`  
+**Auth:** Bearer Token required (organizer or admin)
+
+---
+
+## 3. Ticket Endpoints
+
+### 3.1 List Tickets for Event
+**Method:** GET  
+**Endpoint:** `http://localhost:8000/api/v1/events/{event_id}/tickets`  
+**Auth:** None required
+
+### 3.2 Create Ticket
+**Method:** POST  
+**Endpoint:** `http://localhost:8000/api/v1/events/{event_id}/tickets`  
+**Auth:** Bearer Token required (organizer or admin)
+
+**Request Body:**
+```json
+{
+  "type": "VIP",
+  "price": 100.00,
+  "quantity": 50
+}
+```
+
+### 3.3 Update Ticket
+**Method:** PUT  
+**Endpoint:** `http://localhost:8000/api/v1/tickets/{id}`  
+**Auth:** Bearer Token required (organizer or admin)
+
+**Body (any subset):**
+```json
+{
+  "price": 120.00
+}
+```
+
+### 3.4 Delete Ticket
+**Method:** DELETE  
+**Endpoint:** `http://localhost:8000/api/v1/tickets/{id}`  
+**Auth:** Bearer Token required (organizer or admin)
+
+---
+
+## 4. Booking Endpoints (Customer)
+
+### 4.1 Create Booking
+**Method:** POST  
+**Endpoint:** `http://localhost:8000/api/v1/tickets/{ticket}/bookings`  
+**Auth:** Bearer Token required (customer)
+
+**Request Body:**
+```json
+{
+  "quantity": 2
+}
+```
+
+### 4.2 List Bookings
+**Method:** GET  
+**Endpoint:** `http://localhost:8000/api/v1/bookings`  
+**Auth:** Bearer Token required (customer)
+
+**Query params (optional):**
+- `status`: pending/confirmed/cancelled
+- `start_date` and `end_date`: filter by date range
+
+### 4.3 Get Single Booking
+**Method:** GET  
+**Endpoint:** `http://localhost:8000/api/v1/bookings/{id}`  
+**Auth:** Bearer Token required (customer)
+
+### 4.4 Cancel Booking
+**Method:** PUT  
+**Endpoint:** `http://localhost:8000/api/v1/bookings/{id}/cancel`  
+**Auth:** Bearer Token required (customer)
+
+---
+
+## 5. Booking Endpoints (Admin)
+
+### 5.1 List All Bookings
+**Method:** GET  
+**Endpoint:** `http://localhost:8000/api/v1/admin/bookings`  
+**Auth:** Bearer Token required (admin)
+
+### 5.2 Get Booking by ID
+**Method:** GET  
+**Endpoint:** `http://localhost:8000/api/v1/admin/bookings/{id}`  
+**Auth:** Bearer Token required (admin)
+
+### 5.3 Cancel Booking
+**Method:** PUT  
+**Endpoint:** `http://localhost:8000/api/v1/admin/bookings/{id}/cancel`  
+**Auth:** Bearer Token required (admin)
+
+---
+
+## 6. Payment Endpoints
+
+### 6.1 Process Payment
+**Method:** POST  
+**Endpoint:** `http://localhost:8000/api/v1/bookings/{bookingId}/payment`  
+**Auth:** Bearer Token required (customer)
+
+### 6.2 Get Payment
+**Method:** GET  
+**Endpoint:** `http://localhost:8000/api/v1/payments/{id}`  
+**Auth:** Bearer Token required (customer)
+
         "current_page": 1,
         "data": [
             {
