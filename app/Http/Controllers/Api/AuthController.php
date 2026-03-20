@@ -59,7 +59,7 @@ class AuthController extends Controller
             $response = $this->success([
                 'user' => $user,
                 'access_token' => $accessToken,
-            ], 'User registered successfully');
+            ], 'User registered successfully', 201);
 
             return $response->withCookie($this->refreshCookie($refreshToken));
         } catch (ValidationException $e) {
